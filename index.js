@@ -22,15 +22,23 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
+const categories = ['vegetables', 'fruits', 'dairy', 'meat', 'drinks']
+
 //Get all products in the database
 app.get('/products', async (req, res) => {
+    const {category} = req.query
+    if(category){
+        const products = await Product.find({category})
+        res.render('products/index', {products, category})
+    }else{
     const products = await Product.find({})
-    res.render('products/index', { products })
+    res.render('products/index', { products, category: 'All'})
+    } 
 })
 
 //Get the form page to add a product
 app.get('/products/new', (req, res) => {
-    res.render('products/new')
+    res.render('products/new', { categories })
 })
 
 //Create a new product
@@ -50,17 +58,23 @@ app.get('/products/:id', async (req, res) => {
 //Get the form to Find and edit a product
 app.get('/products/:id/edit', async (req, res) => {
     const product = await Product.findById(req.params.id)
-    res.render('products/edit', { product })
+    // console.log(product)
+    res.render('products/edit', { product, categories })
 })
 
 //Update a product using a put request
 app.put('/products/:id', async (req, res) => {
     const { id } = req.params
     const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { runValidators: true, new: true })
-    res.redirect(`/products/${updatedProduct._id}`) 
+    res.redirect(`/products/${updatedProduct._id}`)
 })
 
-
+//Delete a product  
+app.delete('/products/:id', async (req, res) => {
+    const { id } = req.params
+    await Product.findByIdAndDelete(id)
+    res.redirect('/products')
+})
 
 
 

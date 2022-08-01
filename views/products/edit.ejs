@@ -15,13 +15,13 @@
         <input type="text" name="name" id="name" value="<%= product.name %> " placeholder="product name"><br><br>
         <label for="price">Price (Unit): </label>
         <input type="number" placeholder="product price" name="price" id="price" value="<%= product.price%>"><br><br>
+
         <label for="category">Select Category: </label>
         <select name="category" id="category">
-            <option value="fruit">fruit</option>
-            <option value="vegetable">vegetable</option>
-            <option value="dairy">dairy</option>
-            <option value="meat">meat</option>
-            <option value="drink">drink</option>
+            <% for(let category of categories) {%>
+                <option value="<%= category %>" <%=product.category===category ? 'selected' : '' %> > <%= category %>
+                </option>
+                <% } %>
         </select><br><br>
         <input type="submit" value="submit">
     </form>
